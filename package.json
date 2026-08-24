@@ -11,7 +11,8 @@
         "algorithms",
         "deterministic",
         "testing",
-        "esm"
+        "esm",
+        "forzalabs"
     ],
     "license": "MIT",
     "author": "Forza Labs",
