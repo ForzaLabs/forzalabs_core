@@ -2,21 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Conventions
-
-- **Assertions via `affirm`**, not raw throws or `assert`: `import { affirm } from '@remora/app-core'` — `affirm(x, 'msg')`, `affirm.hasItems(arr, ...)`, `affirm.noDupes(names, ...)`.
-- **Naming**: singleton pattern `class FooClass {}; const Foo = new FooClass(); export default Foo`. Interfaces prefixed `I` (`IConsumer`). Types live in `packages/definitions`.
-- **TypeScript**: `strict: false` across the repo; `moduleResolution: bundler`; targets ES2020/ESNext. `_tests/` and `scripts/` excluded from builds.
-- **Style**: enforced by ESLint + `@stylistic` (see Engineering principles for the shared rules). Repo-specific: 1TBS braces, `arrow-parens: as-needed` (`x => x + 1`), and `no-explicit-any` is a warning, not an error.
-- Cross-package imports always go through the package's `@remora/app-*` name and its `index.ts` barrel, never deep relative paths across packages. After changing a package, re-run `sync:internal` (or have `watch:internal` running) so consumers pick up the rebuilt `dist/`.
-
-## Runtime / environment
-
-- Config is loaded from a `remora/` project directory (`REMORA_DATA_PATH` / `/app/data/remora` in Docker) via `Environment.load()`.
-- Key env vars: `REMORA_LICENCE_KEY` (CLI refuses to run without a valid licence), `REMORA_RUNTIME_CONTEXT` (defaults to `cli`), `REMORA_WORKERS_PATH`, `REMORA_DEBUG_MODE` (enables rotating file logging), `JWT_SECRET`, `ADMIN_JWT_SECRET`, `ROOT_TEMP_PASSWORD`, `INSTALLATION_ID`, `REMORA_MASK_IN_DEV`.
-- Adding a **new source type**: create a driver in `packages/drivers/src/`, register it in `DriverFactory`, extend the source schema/`ISourceAuthentication`, and implement the driver interface methods.
-- Adding a **new consumer output format**: extend the output type in [Consumer.ts](packages/definitions/src/resources/Consumer.ts) and its handling in the executor/output path.
-
 ---
 
 # Engineering principles

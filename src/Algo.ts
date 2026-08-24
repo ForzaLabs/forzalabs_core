@@ -1,4 +1,4 @@
-import affirm from './Affirm'
+import affirm from './Affirm.js'
 
 /**
  * Core Algorithms that are shared between different project/problems.

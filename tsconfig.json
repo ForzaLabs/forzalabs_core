@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         "lib": [
-            "dom",
-            "dom.iterable",
             "esnext"
         ],
-        "allowJs": true,
+        "target": "esnext",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "skipLibCheck": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
@@ -14,21 +14,19 @@
         "strictPropertyInitialization": false,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
-        "target": "esnext",
-        "moduleResolution": "bundler",
-        "module": "esnext",
-        "resolveJsonModule": true,
         "isolatedModules": true,
-        "noEmit": false,
-        "jsx": "react-jsx",
         "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "noEmit": false,
         "outDir": "./dist",
         "rootDir": "./src"
     },
-  "include": [
-    "./src/**/*"
-  ],
-  "exclude": [
-    "./dist/"
-  ]
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./dist/",
+        "./tests/"
+    ]
 }

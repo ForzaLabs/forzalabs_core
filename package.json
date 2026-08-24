@@ -1,35 +1,60 @@
 {
-    "name": "@remora/app-core",
+    "name": "@forzalabs/core",
     "version": "1.0.0",
-    "description": "Core components shared across remora application and packages",
-    "license": "ISC",
-    "author": "",
+    "description": "Dependency-free TypeScript core utilities: preconditions (affirm), array/string/number algorithms (algo), and a deterministic simulation testing engine (DSTE)",
+    "keywords": [
+        "utilities",
+        "helpers",
+        "typescript",
+        "assert",
+        "precondition",
+        "algorithms",
+        "deterministic",
+        "testing",
+        "esm"
+    ],
+    "license": "MIT",
+    "author": "Forza Labs",
+    "homepage": "https://github.com/ForzaLabs/forzalabs_core#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ForzaLabs/forzalabs_core.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ForzaLabs/forzalabs_core/issues"
+    },
     "type": "module",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
-        }
+            "import": "./dist/index.js"
+        },
+        "./package.json": "./package.json"
     },
-    "tsconfig": "tsconfig.json",
+    "sideEffects": false,
     "files": [
         "dist",
         "src",
-        "common"
+        "!src/**/*.test.ts"
     ],
+    "engines": {
+        "node": ">=18"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
-        "build": "tsc",
+        "build": "npm run clean && tsc",
         "dev": "tsc --watch",
         "clean": "rm -rf dist",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "typecheck": "tsc --noEmit",
+        "test": "npm run build && node --disable-warning=ExperimentalWarning tests/Core.test.ts",
+        "prepublishOnly": "npm test"
     },
     "devDependencies": {
+        "@types/node": "^26.2.0",
         "typescript": "^5.8.3"
-    },
-    "dependencies": {
-        "chalk": "^4.1.2",
-        "json-schema": "^0.4.0"
     }
 }
