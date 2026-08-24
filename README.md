@@ -1,3 +1,3 @@
 # ForzaLabs Core
 
-This is the official ForzaLabs core utilities and helpers.# forzalabs_core
+This is the official ForzaLabs core utilities and helpers
