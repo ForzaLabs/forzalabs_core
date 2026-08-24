@@ -48,7 +48,9 @@ affirm.doesntInclude = (value: any, array: any[], msg?: string) => {
 
 affirm.doesntExist = <T>(item: T, array: T[], key: keyof T, msg?: string) => {
     affirm(item, msg)
-    if (!array || !Array.isArray(array) || !array.some(arrayItem => arrayItem[key] === item[key]))
+    if (!array || !Array.isArray(array))
+        throw new Error(`Affirm failed${(msg && msg.length > 0) ? `: ${msg}` : ''}`)
+    if (array.some(arrayItem => arrayItem[key] === item[key]))
         throw new Error(`Affirm failed${(msg && msg.length > 0) ? `: ${msg}` : ''}`)
 }
 

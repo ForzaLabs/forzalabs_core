@@ -12,8 +12,9 @@ const algo = {
         return new Promise(resolve => setTimeout(resolve, milliseconds))
     },
     rng: (min: number, max: number) => {
-        affirm(min, 'Invalid @min parameter. Must be a valid number.')
-        affirm(max, 'Invalid @max parameter. Must be a valid number.')
+        // Number.isFinite, not a truthiness check: 0 is a legitimate bound, and NaN must not pass
+        affirm(Number.isFinite(min), 'Invalid @min parameter. Must be a valid number.')
+        affirm(Number.isFinite(max), 'Invalid @max parameter. Must be a valid number.')
         affirm(min < max, 'The minimum value must be less than the maximum value.')
 
         return Math.floor(Math.random() * (max - min + 1)) + min
@@ -99,9 +100,10 @@ const algo = {
         if (text.length <= chunkSize) return [text]
 
         const numChunks = Math.ceil(text.length / chunkSize)
-        const chunks = new Array(numChunks)
+        const chunks: string[] = new Array(numChunks)
         for (let i = 0; i < chunks.length; i++) {
-            chunks[i] = text.substring(i * chunkSize, chunkSize)
+            // the end is the start of the next chunk; substring clamps it, so the tail chunk is short
+            chunks[i] = text.substring(i * chunkSize, (i + 1) * chunkSize)
         }
 
         return chunks

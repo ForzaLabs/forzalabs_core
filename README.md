@@ -42,17 +42,18 @@ affirm.noDupedItems(users, 'email', 'emails must be unique')
 | `affirm.hasValue(value, msg?)` | `value` is neither `null` nor `undefined` |
 | `affirm.hasItems(array, msg?)` | `array` is an array with at least one item |
 | `affirm.doesntInclude(value, array, msg?)` | `value` is truthy **and** `array` does not contain it |
-| `affirm.doesntExist(item, array, key, msg?)` | see the note below — current behaviour is inverted |
+| `affirm.doesntExist(item, array, key, msg?)` | no entry in `array` shares `item`'s `key` |
 | `affirm.noDupes(array, msg?)` | `array` has no repeated values |
 | `affirm.noDupedItems(array, key, msg?)` | `array` has no repeated values at `key` |
 
 Every guard throws `Error("Affirm failed: <msg>")`, so the reason travels with the stack.
 
-> **Known issue — `affirm.doesntExist`.** Despite its name, it currently throws when `item` is *absent*
-> from `array` and passes when it is *present*, i.e. it asserts the opposite of what it reads as. Treat it
-> as unusable until this is resolved; use `affirm.noDupedItems` for the duplicate check it looks like it
-> performs. Note also that `doesntInclude` calls `affirm(value)` first, so a falsy `value` such as `0`
-> throws regardless of the array's contents.
+`doesntExist` is the guard for "this key is not taken yet" — it throws when some entry already carries
+the same `key` value, and passes against an empty array.
+
+> **Note on `doesntInclude`.** It calls `affirm(value)` before checking the array, so a falsy `value`
+> such as `0`, `''`, or `false` throws regardless of what the array contains. Use `doesntExist` or a
+> plain `includes` check if you need to test for the absence of a falsy value.
 
 ### `algo` — algorithms
 
@@ -74,10 +75,10 @@ await algo.sleep(250)                       // rejects a non-positive delay
 
 algo.hasVal(0)                              // true — only null/undefined are absent
 algo.isNumber(value)                        // typeof check; note NaN is a number
-algo.rng(1, 10)                             // random integer in [min, max]
+algo.rng(0, 10)                             // random integer in [min, max], both inclusive
 algo.duplicates([1, 1, 2, 3, 3])            // [1, 1, 3, 3] — every occurrence, not one per value
 algo.duplicatesObject(rows, 'id')           // same, keyed on a field
-algo.chunkString(text, size)                // see the note below
+algo.chunkString('abcdefgh', 3)             // ['abc', 'def', 'gh']
 ```
 
 `orderBy` and `deepClone` return new values rather than mutating their input. `globCaptures` matches
@@ -85,10 +86,9 @@ everything outside a wildcard literally, so a pattern is never a regular express
 `deepClone` goes through JSON, so it drops `undefined`, functions, and `Map`/`Set`, and turns `Date`
 into a string.
 
-> **Known issues.** `chunkString` is broken: its slice end is miscomputed, so
-> `chunkString('abcdefgh', 3)` returns `["abc", "", "def"]` instead of `["abc", "def", "gh"]`. And `rng`
-> guards its bounds with a truthiness check, so a `min` of `0` — `rng(0, 10)` — throws rather than being
-> accepted. Avoid both until they are fixed.
+`rng` treats both bounds as inclusive and requires `min < max`; non-finite bounds such as `NaN` are
+rejected. `chunkString` never emits an empty chunk — the final chunk is simply shorter when the length
+does not divide evenly.
 
 ### `DSTE` — deterministic simulation testing engine
 

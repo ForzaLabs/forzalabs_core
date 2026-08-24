@@ -41,6 +41,20 @@ const summary = await DSTE.tests([
     DSTE.test('affirm.noDupedItems keys off the given field', () =>
         !throws(() => affirm.noDupedItems([{ id: 1 }, { id: 2 }], 'id'))
         && throws(() => affirm.noDupedItems([{ id: 1 }, { id: 1 }], 'id'))),
+    DSTE.test('affirm.doesntExist throws when a match on the key is already present', () =>
+        throws(() => affirm.doesntExist({ id: 1 }, [{ id: 1 }], 'id'))),
+    DSTE.test('affirm.doesntExist passes when no entry shares the key', () =>
+        !throws(() => affirm.doesntExist({ id: 9 }, [{ id: 1 }, { id: 2 }], 'id'))),
+    DSTE.test('affirm.doesntExist passes against an empty array', () =>
+        !throws(() => affirm.doesntExist({ id: 1 }, [], 'id'))),
+    DSTE.test('affirm.doesntExist compares the key, not object identity', () =>
+        throws(() => affirm.doesntExist({ id: 1, name: 'a' }, [{ id: 1, name: 'b' }], 'id'))),
+    DSTE.test('affirm.doesntExist rejects a missing array', () =>
+        throws(() => affirm.doesntExist({ id: 1 }, null, 'id'))),
+    DSTE.test('affirm.doesntInclude passes when the value is absent', () =>
+        !throws(() => affirm.doesntInclude(3, [1, 2]))),
+    DSTE.test('affirm.doesntInclude throws when the value is present', () =>
+        throws(() => affirm.doesntInclude(1, [1, 2]))),
 
     // algo — arrays
     DSTE.test('algo.hasVal distinguishes 0 from nullish', () =>
@@ -93,6 +107,39 @@ const summary = await DSTE.tests([
         algo.globCaptures('addr*Street', 'nope') === null),
     DSTE.test('algo.globCaptures treats the pattern literally, not as a regex', () =>
         algo.globCaptures('a.c', 'abc') === null),
+
+    // algo — rng and chunkString
+    DSTE.test('algo.rng accepts a min of 0', () => {
+        const value = algo.rng(0, 10)
+        return value >= 0 && value <= 10
+    }),
+    DSTE.test('algo.rng accepts negative bounds', () => {
+        const value = algo.rng(-10, -1)
+        return value >= -10 && value <= -1
+    }),
+    DSTE.test('algo.rng stays within its bounds across many draws', () => {
+        for (let i = 0; i < 1000; i++) {
+            const value = algo.rng(0, 3)
+            if (value < 0 || value > 3) return false
+        }
+        return true
+    }),
+    DSTE.test('algo.rng rejects NaN bounds', () => throws(() => algo.rng(NaN, 10))),
+    DSTE.test('algo.rng rejects a min above its max', () => throws(() => algo.rng(10, 1))),
+    DSTE.test('algo.chunkString splits evenly when the length divides', () =>
+        algo.chunkString('abcdef', 3).join('|') === 'abc|def'),
+    DSTE.test('algo.chunkString leaves a short tail chunk when it does not divide', () =>
+        algo.chunkString('abcdefgh', 3).join('|') === 'abc|def|gh'),
+    DSTE.test('algo.chunkString returns the whole text when it fits in one chunk', () =>
+        algo.chunkString('ab', 5).join('|') === 'ab'),
+    DSTE.test('algo.chunkString of size 1 yields one chunk per character', () =>
+        algo.chunkString('abc', 1).join('|') === 'a|b|c'),
+    DSTE.test('algo.chunkString loses no characters and emits no empty chunk', () => {
+        const chunks = algo.chunkString('abcdefghij', 4)
+        return chunks.join('') === 'abcdefghij' && chunks.every(chunk => chunk.length > 0)
+    }),
+    DSTE.test('algo.chunkString rejects a non-positive chunk size', () =>
+        throws(() => algo.chunkString('abc', 0))),
 
     // algo — misc
     DSTE.test('algo.deepClone produces an independent copy', () => {
