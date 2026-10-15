@@ -34,6 +34,10 @@ affirm.hasValue(count, 'count must be present')        // 0 and '' are valid; nu
 affirm.hasItems(rows, 'rows must be non-empty')
 affirm.noDupes(ids, 'ids must be unique')
 affirm.noDupedItems(users, 'email', 'emails must be unique')
+
+affirm.xor(cardToken, bankAccount, 'pay by card or by bank, not both')
+affirm.allOrNone([proxyHost, proxyPort], 'a proxy needs both host and port, or neither')
+affirm.implies(job.isScheduled, job.startsAt, 'a scheduled job needs a start time')
 ```
 
 | Function | Throws unless |
@@ -45,6 +49,20 @@ affirm.noDupedItems(users, 'email', 'emails must be unique')
 | `affirm.doesntExist(item, array, key, msg?)` | no entry in `array` shares `item`'s `key` |
 | `affirm.noDupes(array, msg?)` | `array` has no repeated values |
 | `affirm.noDupedItems(array, key, msg?)` | `array` has no repeated values at `key` |
+
+Logical guards, for the preconditions that span several values. The array-taking ones also throw on an
+empty array, so a missing set of values fails loudly instead of passing vacuously.
+
+| Function | Logic | Throws unless |
+| --- | --- | --- |
+| `affirm.not(value, msg?)` | NOT | `value` is falsy |
+| `affirm.all(values, msg?)` | AND | every value is truthy |
+| `affirm.any(values, msg?)` | OR | at least one value is truthy |
+| `affirm.none(values, msg?)` | NOR | no value is truthy |
+| `affirm.xor(left, right, msg?)` | XOR | exactly one of the two is truthy |
+| `affirm.oneOf(values, msg?)` | XOR over many | exactly one value is truthy |
+| `affirm.allOrNone(values, msg?)` | XNOR | the values are all truthy or all falsy |
+| `affirm.implies(condition, consequence, msg?)` | IMPLIES | `consequence` is truthy whenever `condition` is |
 
 Every guard throws `Error("Affirm failed: <msg>")`, so the reason travels with the stack.
 

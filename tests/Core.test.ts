@@ -56,6 +56,34 @@ const summary = await DSTE.tests([
     DSTE.test('affirm.doesntInclude throws when the value is present', () =>
         throws(() => affirm.doesntInclude(1, [1, 2]))),
 
+    // affirm — logical operations
+    DSTE.test('affirm.not passes on a falsy value and throws on a truthy one', () =>
+        !throws(() => affirm.not(0)) && throws(() => affirm.not('x'))),
+    DSTE.test('affirm.all requires every value to be truthy', () =>
+        !throws(() => affirm.all([1, 'a', true])) && throws(() => affirm.all([1, 0]))),
+    DSTE.test('affirm.any requires at least one truthy value', () =>
+        !throws(() => affirm.any([0, '', 3])) && throws(() => affirm.any([0, '', null]))),
+    DSTE.test('affirm.none requires every value to be falsy', () =>
+        !throws(() => affirm.none([0, '', null])) && throws(() => affirm.none([0, 1]))),
+    DSTE.test('affirm.xor passes when exactly one side is truthy', () =>
+        !throws(() => affirm.xor(1, 0)) && !throws(() => affirm.xor(null, 'a'))),
+    DSTE.test('affirm.xor throws when both or neither side is truthy', () =>
+        throws(() => affirm.xor(1, 'a')) && throws(() => affirm.xor(0, null))),
+    DSTE.test('affirm.oneOf passes on exactly one truthy value', () =>
+        !throws(() => affirm.oneOf([0, 'a', null])) && throws(() => affirm.oneOf([1, 'a']))),
+    DSTE.test('affirm.oneOf throws when nothing is truthy', () => throws(() => affirm.oneOf([0, '']))),
+    DSTE.test('affirm.allOrNone accepts a full set and an empty one', () =>
+        !throws(() => affirm.allOrNone([1, 'a'])) && !throws(() => affirm.allOrNone([0, null]))),
+    DSTE.test('affirm.allOrNone rejects a partial set', () => throws(() => affirm.allOrNone([1, null]))),
+    DSTE.test('affirm.implies passes when the condition is falsy', () =>
+        !throws(() => affirm.implies(false, null))),
+    DSTE.test('affirm.implies requires the consequence when the condition holds', () =>
+        !throws(() => affirm.implies(true, 'at')) && throws(() => affirm.implies(true, null))),
+    DSTE.test('the logical guards reject an empty array', () =>
+        throws(() => affirm.all([])) && throws(() => affirm.any([]))
+        && throws(() => affirm.none([])) && throws(() => affirm.oneOf([]))
+        && throws(() => affirm.allOrNone([]))),
+
     // algo — arrays
     DSTE.test('algo.hasVal distinguishes 0 from nullish', () =>
         algo.hasVal(0) === true && algo.hasVal(null) === false && algo.hasVal(undefined) === false),
